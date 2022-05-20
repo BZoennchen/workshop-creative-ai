@@ -19,6 +19,8 @@ define :euclid do |k,n|
   # k = number of hits that you want to place evenly within the n beats
   # n = number of beats
   #
+  # the build-in function spread(k,n) does the same
+  #
   sequences = Array.new(k, [1]) + Array.new(n-k, [0])
   while n != k
     if n > k
@@ -28,8 +30,10 @@ define :euclid do |k,n|
     end
     
     pivot = [n,k].min
+    if pivot <= 1 && sequences[sequences.length-1] != [0]
+      break
+    end
     len = sequences.length
-    
     for i in 0..pivot-1
       sequences[pivot-1-i] += sequences.pop
     end
@@ -155,7 +159,7 @@ end
 define :markov_melody do |n, notes|
   states = notes.uniq
   matrix = gen_markov_matrix(states.ring, notes.ring)
-  return gen_mmelody(30, matrix, 0, states)
+  return gen_mmelody(n, matrix, rand_i(states.length-1), states)
 end
 ################ END MELODY GENERATION ###########
 
@@ -205,14 +209,14 @@ notes_bach = [[74, 0.5],
               ]
 ################ SONGS ###########################
 
-comment do
-  use_bpm 60
-  notes = markov_melody(7, notes_hb)
-  
-  live_loop :piano do
-    use_synth :piano
-    play notes.tick[0], release: notes.look[1]*1.3
-    sleep notes.look[1]
-  end
-  
-end
+
+#use_bpm 60
+#notes = markov_melody(12, notes_bach)
+#notes = notes_bach
+
+#live_loop :piano do
+#  use_synth :piano
+#  play notes.tick[0], release: notes.look[1]*1.3
+#  sleep notes.look[1]
+#end
+#puts euclid(11, 24)
